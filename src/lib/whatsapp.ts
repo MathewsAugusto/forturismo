@@ -4,6 +4,14 @@ import { DESTINATIONS, GUIDES, TOURS } from '@/data/mock-data';
 // Default Central Concierge WhatsApp Number
 export const CENTRAL_CONCIERGE_PHONE = '5511999998888';
 
+export function getCentralConciergePhone(): string {
+  if (typeof window !== 'undefined') {
+    const customPhone = localStorage.getItem('forturismo_central_phone');
+    if (customPhone) return customPhone;
+  }
+  return CENTRAL_CONCIERGE_PHONE;
+}
+
 export function generateBookingReferenceCode(): string {
   const randomSuffix = Math.floor(1000 + Math.random() * 9000);
   const year = new Date().getFullYear();
@@ -91,7 +99,7 @@ export function buildWhatsAppUrl({ booking, conciergePhone, directToGuide }: For
   const guide = booking.guideId ? GUIDES.find((g) => g.id === booking.guideId) : null;
   
   // Decide target phone
-  let targetPhone = conciergePhone || CENTRAL_CONCIERGE_PHONE;
+  let targetPhone = conciergePhone || getCentralConciergePhone();
   if (directToGuide && guide && guide.whatsappNumber) {
     targetPhone = guide.whatsappNumber.replace(/[^0-9]/g, '');
   } else {

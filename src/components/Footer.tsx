@@ -107,6 +107,9 @@ export default function Footer() {
             <Link href="/terms" className="hover:text-slate-400 transition-colors">
               {t('termsOfService')}
             </Link>
+            <Link href="/admin" className="hover:text-emerald-400 transition-colors">
+              Admin
+            </Link>
           </div>
         </div>
       </div>
