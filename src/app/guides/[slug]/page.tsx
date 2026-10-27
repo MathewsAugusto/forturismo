@@ -6,6 +6,8 @@ import { GUIDES, DESTINATIONS, TOURS } from '@/data/mock-data';
 import TourCard from '@/components/TourCard';
 import GuideDetailClient from './GuideDetailClient';
 
+export const instant = false;
+
 export async function generateStaticParams() {
   return GUIDES.map((guide) => ({
     slug: guide.slug,
