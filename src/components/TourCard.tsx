@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { Tour } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { DESTINATIONS, GUIDES } from '@/data/mock-data';
@@ -14,7 +15,10 @@ export default function TourCard({ tour }: { tour: Tour }) {
   const guide = GUIDES.find((g) => g.id === tour.guideId);
 
   return (
-    <div className="group flex flex-col bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-sky-300 transition-all duration-300 overflow-hidden">
+    <motion.div
+      whileHover={{ y: -6, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
+      className="group flex flex-col h-full bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-2xl hover:border-sky-300 transition-all duration-300 overflow-hidden"
+    >
       {/* Image */}
       <div className="relative h-56 w-full overflow-hidden bg-slate-900">
         <Image
@@ -101,6 +105,6 @@ export default function TourCard({ tour }: { tour: Tour }) {
           </Link>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

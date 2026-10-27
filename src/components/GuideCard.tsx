@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { Guide } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { DESTINATIONS } from '@/data/mock-data';
@@ -13,7 +14,10 @@ export default function GuideCard({ guide }: { guide: Guide }) {
   const destination = DESTINATIONS.find((d) => d.id === guide.destinationId);
 
   return (
-    <div className="group flex flex-col bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden">
+    <motion.div
+      whileHover={{ y: -6, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
+      className="group flex flex-col h-full bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-2xl hover:border-emerald-300 transition-all duration-300 overflow-hidden"
+    >
       {/* Card Header with Avatar & Status */}
       <div className="p-6 pb-4">
         <div className="flex items-start gap-4">
@@ -112,6 +116,6 @@ export default function GuideCard({ guide }: { guide: Guide }) {
           {t('requestWithGuide')}
         </Link>
       </div>
-    </div>
+    </motion.div>
   );
 }
