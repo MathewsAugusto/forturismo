@@ -10,38 +10,41 @@ interface MotionRevealProps extends HTMLMotionProps<'div'> {
   duration?: number;
   distance?: number;
   className?: string;
-  cascade?: boolean;
+  withBlur?: boolean;
 }
 
 export default function MotionReveal({
   children,
   direction = 'up',
   delay = 0,
-  duration = 0.6,
-  distance = 32,
+  duration = 0.9,
+  distance = 26,
   className = '',
+  withBlur = true,
   ...props
 }: MotionRevealProps) {
-  let initial = {};
+  let initial: Record<string, string | number> = {
+    opacity: 0,
+    ...(withBlur ? { filter: 'blur(8px)' } : {}),
+  };
 
   switch (direction) {
     case 'up':
-      initial = { opacity: 0, y: distance };
+      initial = { ...initial, y: distance };
       break;
     case 'down':
-      initial = { opacity: 0, y: -distance };
+      initial = { ...initial, y: -distance };
       break;
     case 'left':
-      initial = { opacity: 0, x: distance };
+      initial = { ...initial, x: distance };
       break;
     case 'right':
-      initial = { opacity: 0, x: -distance };
+      initial = { ...initial, x: -distance };
       break;
     case 'scale':
-      initial = { opacity: 0, scale: 0.94 };
+      initial = { ...initial, scale: 0.95 };
       break;
     case 'none':
-      initial = { opacity: 0 };
       break;
   }
 
@@ -53,12 +56,13 @@ export default function MotionReveal({
         x: 0,
         y: 0,
         scale: 1,
+        filter: 'blur(0px)',
       }}
-      viewport={{ once: true, amount: 0.15 }}
+      viewport={{ once: true, amount: 0.12 }}
       transition={{
         duration,
         delay,
-        ease: [0.22, 1, 0.36, 1], // Smooth cubic-bezier
+        ease: [0.16, 1, 0.3, 1], // Luxurious smooth deceleration curve
       }}
       className={className}
       {...props}
