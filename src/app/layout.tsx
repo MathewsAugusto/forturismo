@@ -1,39 +1,47 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Playfair_Display, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/context/LanguageContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const playfairDisplay = Playfair_Display({
+  variable: '--font-serif',
   subsets: ['latin'],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: '--font-sans',
   subsets: ['latin'],
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: '--font-mono',
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'ForTurismo — International Tourism Platform | Certified Local Guides',
+  title: 'ForTurismo — Elite Private Tour Guides | Thailand, Dubai & Brazil',
   description:
-    'Connect with 14 verified, elite local guides in Thailand, Dubai/UAE, and Brazil. Authentic private tours, multilingual support, and seamless WhatsApp concierge.',
+    'Experience curated private journeys with 14 accredited elite tour guides across Bangkok, Chiang Mai, Phuket, Dubai, and Rio de Janeiro. Real-time multilingual concierge.',
   keywords: [
-    'tour guides',
-    'private tours',
-    'thailand tour guide',
-    'dubai tour guide',
-    'rio de janeiro tour guide',
-    'brazil tourism',
+    'private luxury tour guides',
     'certified tour guides',
-    'whatsapp travel booking',
+    'thailand luxury tours',
+    'dubai private guide',
+    'rio de janeiro certified guide',
+    'TAT license guide',
+    'DTCM licensed tour guide',
+    'CADASTUR MTur',
   ],
-  authors: [{ name: 'ForTurismo' }],
+  authors: [{ name: 'ForTurismo Concierge' }],
   openGraph: {
-    title: 'ForTurismo — Discover the World with Certified Local Guides',
+    title: 'ForTurismo — Discover the World with Certified Elite Guides',
     description:
-      'Connecting travelers with qualified local tour guides in Thailand, Dubai/UAE, and Brazil. Tailored private experiences and instant WhatsApp coordination.',
+      'Connecting discerning travelers with 14 verified local tour guides in Thailand, Dubai, and Brazil. Tailored private journeys and seamless WhatsApp concierge.',
     type: 'website',
   },
 };
@@ -44,8 +52,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth`}>
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900 selection:bg-emerald-500 selection:text-white">
+    <html
+      lang="pt"
+      data-scroll-behavior="smooth"
+      className={`${playfairDisplay.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} h-full antialiased scroll-smooth`}
+    >
+      <body className="min-h-full flex flex-col bg-[#FAF8F5] text-[#121826] selection:bg-[#C59B27] selection:text-white font-sans">
         <LanguageProvider>
           <Navbar />
           <main className="flex-1">{children}</main>

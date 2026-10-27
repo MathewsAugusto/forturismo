@@ -381,9 +381,9 @@ export default function BookingForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-700 text-white font-black text-base shadow-lg shadow-emerald-900/15 hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 rounded-2xl bg-stone-900 text-amber-300 border border-amber-500/40 hover:bg-stone-800 hover:border-amber-400 font-bold text-xs uppercase tracking-widest shadow-xl shadow-stone-900/15 btn-tactile cursor-pointer transition-all disabled:opacity-50"
           >
-            <MessageCircle className="w-5 h-5" />
+            <MessageCircle className="w-4 h-4 text-amber-400" />
             {isSubmitting ? t('submittingBtn') : t('submitBookingBtn')}
           </button>
         </div>

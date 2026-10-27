@@ -1,26 +1,144 @@
 @import "tailwindcss";
 
+@theme {
+  --font-serif: var(--font-serif), 'Playfair Display', Georgia, serif;
+  --font-sans: var(--font-sans), 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-mono), 'JetBrains Mono', monospace;
+
+  --color-alabaster: #FAF8F5;
+  --color-sand-50: #FAF8F5;
+  --color-sand-100: #F3EFEA;
+  --color-sand-200: #E6DFD5;
+  --color-sand-300: #D4C9BA;
+  --color-sand-900: #1C1917;
+
+  --color-gold-50: #FCF9F0;
+  --color-gold-100: #F7F0D8;
+  --color-gold-200: #EEDFAf;
+  --color-gold-300: #E0C77A;
+  --color-gold-400: #D4AF37;
+  --color-gold-500: #C59B27;
+  --color-gold-600: #A87D1D;
+  --color-gold-700: #875F1A;
+  --color-gold-800: #6F4D1B;
+  --color-gold-900: #5D401C;
+
+  --color-navy-900: #090E17;
+  --color-navy-950: #06090F;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #FAF8F5;
+  --foreground: #121826;
+  --font-serif-default: 'Playfair Display', Georgia, serif;
+  --font-sans-default: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- LUXURY EDITORIAL TYPOGRAPHY UTILITIES --- */
+.font-editorial {
+  font-family: var(--font-serif), Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.font-editorial-italic {
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+}
+
+/* --- GENJUTSU ANTI-SLOP FINISHING UTILITIES --- */
+/* High-end glassmorphic surface with specular light border */
+.glass-luxury {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 4px 6px -1px rgba(18, 24, 38, 0.03),
+    0 12px 24px -4px rgba(18, 24, 38, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.glass-luxury-dark {
+  background: rgba(9, 14, 23, 0.78);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Subtle gold luxury glow on hover */
+.hover-gold-sheen {
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-gold-sheen:hover {
+  box-shadow: 0 16px 36px -10px rgba(197, 155, 39, 0.25);
+  border-color: rgba(197, 155, 39, 0.45);
+}
+
+/* Tactile button active states */
+.btn-tactile {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease, background-color 0.18s ease;
+  will-change: transform;
+}
+
+.btn-tactile:active {
+  transform: scale(0.975);
+}
+
+/* Gold foil gradient badge */
+.badge-accreditation {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(197, 155, 39, 0.05) 100%);
+  border: 1px solid rgba(197, 155, 39, 0.35);
+  color: #875F1A;
+}
+
+/* Luxury card container with layered ambient shadow */
+.card-concierge {
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 219, 210, 0.8);
+  box-shadow: 
+    0 1px 2px rgba(18, 24, 38, 0.03),
+    0 10px 24px -8px rgba(18, 24, 38, 0.06);
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-concierge:hover {
+  transform: translateY(-5px);
+  border-color: rgba(197, 155, 39, 0.4);
+  box-shadow: 
+    0 4px 12px rgba(18, 24, 38, 0.04),
+    0 22px 40px -12px rgba(197, 155, 39, 0.12);
+}
+
+/* Custom discreet scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF8F5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4C9BA;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C59B27;
 }

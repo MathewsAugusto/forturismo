@@ -16,12 +16,12 @@ export default function DestinationCard({ destination }: { destination: Destinat
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Auto-play slideshow (every 4.5s when not explicitly hovered)
+  // Auto-play slideshow (every 5s when not explicitly hovered)
   useEffect(() => {
     if (images.length <= 1 || isHovered) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % images.length);
-    }, 4500);
+    }, 5000);
     return () => clearInterval(interval);
   }, [images.length, isHovered]);
 
@@ -45,21 +45,21 @@ export default function DestinationCard({ destination }: { destination: Destinat
 
   return (
     <motion.div
-      whileHover={{ y: -8, transition: { type: 'spring', stiffness: 280, damping: 22 } }}
+      whileHover={{ y: -6, transition: { type: 'spring', stiffness: 280, damping: 22 } }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="h-full"
     >
       <Link
         href={`/destinations/${destination.slug}`}
-        className="group relative flex flex-col h-full overflow-hidden rounded-3xl bg-white border border-slate-200/90 shadow-sm hover:shadow-2xl hover:border-sky-300 transition-all duration-500"
+        className="group relative flex flex-col h-full overflow-hidden rounded-3xl card-concierge cursor-pointer"
       >
         {/* --- IMAGE SLIDESHOW CONTAINER --- */}
-        <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-slate-950">
+        <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-stone-950">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
-              initial={{ opacity: 0, scale: 1.08 }}
+              initial={{ opacity: 0, scale: 1.05 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
@@ -76,15 +76,15 @@ export default function DestinationCard({ destination }: { destination: Destinat
           </AnimatePresence>
 
           {/* Vignette Gradients */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-slate-950/40 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-stone-950/40 pointer-events-none" />
 
           {/* Top Badges */}
           <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-white/95 backdrop-blur-md text-slate-900 shadow-md">
-              <Users className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-stone-900/85 backdrop-blur-md text-amber-300 border border-amber-500/30 shadow-md">
+              <Users className="w-3.5 h-3.5 text-amber-400" />
               {destination.guideCount} {t('guidesAvailable')}
             </span>
-            <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-900/80 backdrop-blur-md text-white border border-white/20">
+            <span className="px-3 py-1.5 rounded-full text-xs font-bold font-mono bg-stone-900/85 backdrop-blur-md text-stone-200 border border-white/10">
               {destination.currency}
             </span>
           </div>
@@ -95,7 +95,7 @@ export default function DestinationCard({ destination }: { destination: Destinat
               <button
                 type="button"
                 onClick={prevSlide}
-                className="p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white backdrop-blur-md border border-white/20 shadow-md pointer-events-auto transition-transform hover:scale-110 active:scale-95"
+                className="p-1.5 rounded-full bg-stone-950/70 hover:bg-stone-900 text-amber-200 backdrop-blur-md border border-amber-500/30 shadow-md pointer-events-auto transition-transform hover:scale-110 active:scale-95 cursor-pointer"
                 aria-label="Previous Photo"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -103,7 +103,7 @@ export default function DestinationCard({ destination }: { destination: Destinat
               <button
                 type="button"
                 onClick={nextSlide}
-                className="p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white backdrop-blur-md border border-white/20 shadow-md pointer-events-auto transition-transform hover:scale-110 active:scale-95"
+                className="p-1.5 rounded-full bg-stone-950/70 hover:bg-stone-900 text-amber-200 backdrop-blur-md border border-amber-500/30 shadow-md pointer-events-auto transition-transform hover:scale-110 active:scale-95 cursor-pointer"
                 aria-label="Next Photo"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -119,10 +119,10 @@ export default function DestinationCard({ destination }: { destination: Destinat
                   key={idx}
                   type="button"
                   onClick={(e) => goToSlide(e, idx)}
-                  className={`h-1.5 rounded-full transition-all duration-300 pointer-events-auto ${
+                  className={`h-1.5 rounded-full transition-all duration-300 pointer-events-auto cursor-pointer ${
                     currentSlide === idx
-                      ? 'w-6 bg-white shadow-md'
-                      : 'w-1.5 bg-white/45 hover:bg-white/80'
+                      ? 'w-6 bg-amber-400 shadow-md'
+                      : 'w-1.5 bg-white/40 hover:bg-white/80'
                   }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
@@ -132,10 +132,10 @@ export default function DestinationCard({ destination }: { destination: Destinat
 
           {/* Destination Title on Image */}
           <div className="absolute bottom-4 left-4 right-4 z-10 pointer-events-none">
-            <h3 className="text-2xl font-black text-white tracking-tight drop-shadow-md">
+            <h3 className="font-editorial text-2xl font-bold text-white tracking-tight drop-shadow-md">
               {destination.name[locale]}
             </h3>
-            <p className="text-xs text-slate-200 font-medium line-clamp-1 mt-0.5 drop-shadow-xs">
+            <p className="text-xs text-stone-300 font-normal line-clamp-1 mt-0.5 drop-shadow-xs">
               {destination.tagline[locale]}
             </p>
           </div>
@@ -143,21 +143,21 @@ export default function DestinationCard({ destination }: { destination: Destinat
 
         {/* --- CARD BODY --- */}
         <div className="p-6 flex flex-col flex-1 justify-between bg-white">
-          <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed mb-6">
+          <p className="text-xs sm:text-sm text-stone-600 line-clamp-3 leading-relaxed mb-6 font-sans">
             {destination.description[locale]}
           </p>
 
           {/* Top Attraction Highlights */}
           <div className="mb-6 space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3 text-amber-500" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-amber-600" />
               {t('topAttractionsTitle')}
             </span>
             <div className="flex flex-wrap gap-1.5">
               {destination.topAttractions[locale].slice(0, 3).map((item, index) => (
                 <span
                   key={index}
-                  className="text-xs font-medium bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md"
+                  className="text-xs font-medium bg-[#FAF8F5] text-stone-700 px-2.5 py-1 rounded-lg border border-stone-200/80"
                 >
                   {item}
                 </span>
@@ -166,9 +166,9 @@ export default function DestinationCard({ destination }: { destination: Destinat
           </div>
 
           {/* Action Link */}
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-sm font-bold text-sky-700 group-hover:text-emerald-600 transition-colors">
+          <div className="pt-4 border-t border-stone-100 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-amber-800 group-hover:text-amber-600 transition-colors">
             <span>{t('viewDestination')}</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform duration-300" />
           </div>
         </div>
       </Link>

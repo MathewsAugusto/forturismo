@@ -12,10 +12,8 @@ import {
   MapPin,
   Calendar,
   Sparkles,
-  ShieldCheck,
   Coins,
   Compass,
-  ArrowRight,
   MessageCircle,
 } from 'lucide-react';
 
@@ -33,9 +31,9 @@ export default function DestinationDetailClient({
   const { locale, t } = useLanguage();
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-24">
+    <div className="bg-[#FAF8F5] min-h-screen pb-28">
       {/* Hero Banner */}
-      <div className="relative h-80 sm:h-[480px] w-full bg-slate-950 overflow-hidden">
+      <div className="relative h-80 sm:h-[480px] w-full bg-stone-950 overflow-hidden">
         <Image
           src={destination.heroImage}
           alt={destination.name[locale]}
@@ -44,12 +42,12 @@ export default function DestinationDetailClient({
           sizes="100vw"
           className="object-cover opacity-60"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-end pb-12 sm:pb-16">
           <MotionReveal direction="down" delay={0.1}>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold w-fit mb-4">
-              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-900/80 backdrop-blur-md border border-amber-500/30 text-amber-300 text-xs font-semibold w-fit mb-4">
+              <MapPin className="w-3.5 h-3.5 text-amber-400" />
               <span>{destination.countryCode}</span>
               <span>•</span>
               <span>{guides.length} {t('guidesAvailable')}</span>
@@ -57,13 +55,13 @@ export default function DestinationDetailClient({
           </MotionReveal>
 
           <MotionReveal direction="up" delay={0.2}>
-            <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight drop-shadow-md">
+            <h1 className="font-editorial text-4xl sm:text-6xl font-bold text-white tracking-tight drop-shadow-md">
               {destination.name[locale]}
             </h1>
           </MotionReveal>
 
           <MotionReveal direction="up" delay={0.3}>
-            <p className="mt-2 text-base sm:text-xl text-slate-200 font-medium max-w-2xl drop-shadow-xs">
+            <p className="mt-2 text-base sm:text-xl text-stone-200 font-normal max-w-2xl drop-shadow-xs font-sans">
               {destination.tagline[locale]}
             </p>
           </MotionReveal>
@@ -71,29 +69,29 @@ export default function DestinationDetailClient({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
         {/* Overview & Highlights Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Destination Description */}
           <MotionReveal direction="up" delay={0.1} className="lg:col-span-2">
-            <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm space-y-6 h-full">
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+            <div className="bg-white rounded-3xl p-6 sm:p-10 border border-stone-200/90 shadow-sm space-y-6 h-full">
+              <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
                 About {destination.name[locale]}
               </h2>
-              <p className="text-base text-slate-600 leading-relaxed font-normal">
+              <p className="text-base text-stone-600 leading-relaxed font-sans">
                 {destination.description[locale]}
               </p>
 
               {/* Travel Tips & Etiquette */}
-              <div className="pt-6 border-t border-slate-100">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-500" />
+              <div className="pt-6 border-t border-stone-100">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-4 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-600" />
                   {t('travelTipsTitle')}
                 </h3>
-                <ul className="space-y-2.5">
+                <ul className="space-y-3">
                   {destination.travelTips[locale].map((tip, idx) => (
-                    <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-700">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-2 shrink-0" />
+                    <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-stone-700">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-2 shrink-0" />
                       <span>{tip}</span>
                     </li>
                   ))}
@@ -104,53 +102,53 @@ export default function DestinationDetailClient({
 
           {/* Quick Info Sidebar */}
           <MotionReveal direction="up" delay={0.2} className="space-y-6">
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-stone-200/90 shadow-sm space-y-4">
               <div className="flex items-start gap-3">
-                <Calendar className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" />
+                <Calendar className="w-4 h-4 text-amber-700 shrink-0 mt-1" />
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  <h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
                     {t('bestTimeToVisitTitle')}
                   </h4>
-                  <p className="text-sm font-semibold text-slate-800 mt-1">
+                  <p className="text-sm font-semibold text-stone-900 mt-1">
                     {destination.bestTimeToVisit[locale]}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 pt-3 border-t border-slate-100">
-                <Coins className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 pt-3 border-t border-stone-100">
+                <Coins className="w-4 h-4 text-amber-700 shrink-0 mt-1" />
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  <h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
                     Local Currency
                   </h4>
-                  <p className="text-sm font-semibold text-slate-800 mt-1">
+                  <p className="text-sm font-semibold text-stone-900 mt-1 font-mono">
                     {destination.currency} ({destination.currencySymbol})
                   </p>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100">
+              <div className="pt-4 border-t border-stone-100">
                 <Link
                   href={`/booking?destination=${destination.id}`}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm shadow-md hover:from-emerald-500 hover:to-teal-500 transition-all text-center"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-stone-900 text-amber-200 border border-amber-500/30 hover:bg-stone-800 hover:border-amber-400 font-bold text-xs uppercase tracking-wider transition-all text-center btn-tactile cursor-pointer"
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <MessageCircle className="w-4 h-4 text-amber-400" />
                   {t('navRequestBooking')}
                 </Link>
               </div>
             </div>
 
             {/* Top Attractions List */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                <Compass className="w-4 h-4 text-sky-600" />
+            <div className="bg-white rounded-3xl p-6 border border-stone-200/90 shadow-sm">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-3 flex items-center gap-2">
+                <Compass className="w-4 h-4 text-amber-700" />
                 {t('topAttractionsTitle')}
               </h3>
               <div className="space-y-2">
                 {destination.topAttractions[locale].map((attraction, i) => (
                   <div
                     key={i}
-                    className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs font-semibold text-slate-700"
+                    className="p-3 rounded-xl bg-[#FAF8F5] border border-stone-200/70 text-xs font-medium text-stone-800"
                   >
                     {attraction}
                   </div>
@@ -165,10 +163,10 @@ export default function DestinationDetailClient({
           <MotionReveal direction="up">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100/70 px-3 py-1 rounded-full">
-                  Local Experts
+                <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-amber-800 bg-amber-500/10 border border-amber-600/20 px-3 py-1 rounded-full inline-block">
+                  Concierge Network
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-2">
+                <h2 className="font-editorial text-2xl sm:text-4xl font-bold text-stone-900 tracking-tight mt-2">
                   {t('guidesInDestination')} {destination.name[locale]} ({guides.length})
                 </h2>
               </div>
@@ -194,10 +192,10 @@ export default function DestinationDetailClient({
           <div className="space-y-8">
             <MotionReveal direction="up">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-sky-700 bg-sky-100/70 px-3 py-1 rounded-full">
-                  Featured Itineraries
+                <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-amber-800 bg-amber-500/10 border border-amber-600/20 px-3 py-1 rounded-full inline-block">
+                  Private Expeditions
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-2">
+                <h2 className="font-editorial text-2xl sm:text-4xl font-bold text-stone-900 tracking-tight mt-2">
                   {t('toursInDestination')} {destination.name[locale]} ({tours.length})
                 </h2>
               </div>
