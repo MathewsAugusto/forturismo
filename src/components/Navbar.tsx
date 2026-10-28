@@ -65,6 +65,13 @@ export default function Navbar() {
             >
               {t('navHowItWorks')}
             </Link>
+            <Link
+              href="/guide"
+              className="text-xs font-semibold uppercase tracking-wider text-amber-900 bg-amber-50 hover:bg-amber-100/80 px-2.5 py-1.5 rounded-lg border border-amber-200/80 transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>{t('navGuidePortal')}</span>
+            </Link>
           </nav>
 
           {/* Right Section: Language Selector + Luxury CTA */}
@@ -181,6 +188,17 @@ export default function Navbar() {
               className="px-3 py-2.5 rounded-xl text-sm font-semibold text-stone-800 hover:bg-stone-100"
             >
               {t('navHowItWorks')}
+            </Link>
+            <Link
+              href="/guide"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2.5 rounded-xl text-sm font-semibold text-amber-900 bg-amber-50 border border-amber-200/80 hover:bg-amber-100/80 flex items-center justify-between"
+            >
+              <span className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                {t('navGuidePortal')}
+              </span>
+              <span className="text-[10px] font-mono uppercase bg-amber-200/60 text-amber-900 px-2 py-0.5 rounded font-bold">Acesso</span>
             </Link>
           </nav>
 

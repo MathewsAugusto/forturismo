@@ -9,6 +9,7 @@ export const TRANSLATIONS = {
     navAbout: 'About Us',
     navHowItWorks: 'How It Works',
     navRequestBooking: 'Plan Your Trip',
+    navGuidePortal: 'Guide Area',
 
     // Hero
     heroBadge: 'Certified Local Guides in Thailand, Dubai & Brazil',
@@ -142,6 +143,7 @@ export const TRANSLATIONS = {
     navAbout: 'Sobre Nós',
     navHowItWorks: 'Como Funciona',
     navRequestBooking: 'Planeje sua Viagem',
+    navGuidePortal: 'Área do Guia',
 
     // Hero
     heroBadge: 'Guias Locais Credenciados na Tailândia, Dubai e Brasil',
@@ -275,6 +277,7 @@ export const TRANSLATIONS = {
     navAbout: 'Sobre Nosotros',
     navHowItWorks: 'Cómo Funciona',
     navRequestBooking: 'Planifique su Viaje',
+    navGuidePortal: 'Área del Guía',
 
     // Hero
     heroBadge: 'Guías Locales Certificados en Tailandia, Dubái y Brasil',

@@ -107,6 +107,10 @@ export default function Footer() {
             <Link href="/terms" className="hover:text-stone-300 transition-colors">
               {t('termsOfService')}
             </Link>
+            <Link href="/guide" className="hover:text-amber-400 transition-colors font-mono flex items-center gap-1.5 text-stone-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              {t('navGuidePortal')}
+            </Link>
             <Link href="/admin" className="hover:text-amber-400 transition-colors font-mono">
               Admin Backoffice
             </Link>

@@ -118,6 +118,16 @@ export default function GuideDetailClient({
                   <MessageCircle className="w-4 h-4 text-amber-400" />
                   {t('requestBookingWithThisGuide')}
                 </Link>
+
+                <div className="pt-1 text-center">
+                  <Link
+                    href={`/guide?guideId=${guide.id}`}
+                    className="inline-flex items-center gap-1.5 text-[11px] font-mono text-stone-400 hover:text-amber-800 transition-colors"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    {locale === 'pt' ? 'É este guia? Acessar seu Portal →' : locale === 'es' ? '¿Eres este guía? Acceder a tu Portal →' : 'Are you this guide? Access your Portal →'}
+                  </Link>
+                </div>
               </div>
             </div>
 
