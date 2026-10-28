@@ -67,6 +67,7 @@ flowchart TD
 | **RF-12** | **Multi-Moeda Indicativa** | Conversor de moeda visual (USD, EUR, BRL, AED, THB) para visualização de valores médios estimados. | **Could Have** |
 | **RF-13** | **Avaliações com Verificação** | Sistema de feedback pós-atendimento para coleta de reviews pontuados. | **Could Have** |
 | **RF-14** | **Checkout Online Direto** | Processamento direto de pagamentos (Stripe Connect). | *Won't Have (Fase 2)* |
+| **RF-15** | **Portal do Guia Credenciado** | Área restrita (`/guide`) para guias credenciados com autenticação sem senha (WhatsApp OTP), controle de disponibilidade, bloqueio de calendário, CRM de reservas e submissão de roteiros. Detalhado em [SRS_PORTAL_DO_GUIA.md](./SRS_PORTAL_DO_GUIA.md). | **Must Have** |
 
 ---
 
