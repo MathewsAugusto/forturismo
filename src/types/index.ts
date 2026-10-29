@@ -98,3 +98,13 @@ export interface BookingRequest {
   status: 'PENDING' | 'CONTACTED' | 'CONFIRMED' | 'CANCELLED';
   createdAt: string;
 }
+
+export interface GuideAvailabilityBlock {
+  id: string;
+  guideId: string;
+  startDate: string; // YYYY-MM-DD
+  endDate: string;   // YYYY-MM-DD
+  reason: string;    // e.g. "Roteiro privativo", "Férias", "Compromisso pessoal"
+  createdAt: string;
+}
+

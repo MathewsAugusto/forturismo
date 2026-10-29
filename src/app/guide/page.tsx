@@ -5,7 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 import { GUIDES, DESTINATIONS, TOURS } from '@/data/mock-data';
-import { Guide, Tour, BookingRequest } from '@/types';
+import { Guide, Tour, BookingRequest, GuideAvailabilityBlock } from '@/types';
+import { getGuideBlocks, saveGuideBlocks } from '@/lib/availability';
 import {
   ShieldCheck,
   Award,
@@ -33,6 +34,11 @@ import {
   ChevronRight,
   PlusCircle,
   X,
+  Trash2,
+  CalendarDays,
+  ChevronLeft,
+  Plus,
+  AlertCircle,
 } from 'lucide-react';
 
 const DEFAULT_GUIDE_PIN = 'guia2026';
@@ -99,7 +105,16 @@ export default function GuidePortalPage() {
   const [isAvailableForBookings, setIsAvailableForBookings] = useState<boolean>(true);
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<'overview' | 'leads' | 'tours' | 'credentials'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'calendar' | 'leads' | 'tours' | 'credentials'>('overview');
+
+  // Availability Blocks & Calendar
+  const [availabilityBlocks, setAvailabilityBlocks] = useState<GuideAvailabilityBlock[]>([]);
+  const [calendarMonthOffset, setCalendarMonthOffset] = useState<number>(0); // 0 = Nov 2026, 1 = Dec 2026, etc.
+  const [isBlockModalOpen, setIsBlockModalOpen] = useState<boolean>(false);
+  const [blockStartDate, setBlockStartDate] = useState<string>('');
+  const [blockEndDate, setBlockEndDate] = useState<string>('');
+  const [blockReason, setBlockReason] = useState<string>('');
+  const [blockError, setBlockError] = useState<string>('');
 
   // Guide Bookings
   const [bookings, setBookings] = useState<BookingRequest[]>([]);
@@ -168,11 +183,55 @@ export default function GuidePortalPage() {
         localStorage.setItem('forturismo_bookings', JSON.stringify(updatedAll));
         setBookings(sampleBookings);
       }
+      // Load availability blocks
+      const blocks = getGuideBlocks(activeGuide.id);
+      setAvailabilityBlocks(blocks);
     } catch {
       // Error handling
       setBookings(generateSampleBookingsForGuide(activeGuide));
     }
   }, [activeGuide]);
+
+  // Handle Add Availability Block
+  const handleAddBlock = (e: React.FormEvent) => {
+    e.preventDefault();
+    setBlockError('');
+    if (!activeGuide) return;
+    if (!blockStartDate) {
+      setBlockError('Informe a data de início do bloqueio.');
+      return;
+    }
+    const finalEnd = blockEndDate || blockStartDate;
+    if (new Date(finalEnd).getTime() < new Date(blockStartDate).getTime()) {
+      setBlockError('A data final não pode ser anterior à data inicial.');
+      return;
+    }
+
+    const newBlock: GuideAvailabilityBlock = {
+      id: `block-${Date.now()}`,
+      guideId: activeGuide.id,
+      startDate: blockStartDate,
+      endDate: finalEnd,
+      reason: blockReason.trim() || 'Indisponibilidade Pessoal',
+      createdAt: new Date().toISOString(),
+    };
+
+    const updated = [newBlock, ...availabilityBlocks];
+    setAvailabilityBlocks(updated);
+    saveGuideBlocks(activeGuide.id, updated);
+    setIsBlockModalOpen(false);
+    setBlockStartDate('');
+    setBlockEndDate('');
+    setBlockReason('');
+  };
+
+  // Handle Remove Availability Block
+  const handleRemoveBlock = (blockId: string) => {
+    if (!activeGuide) return;
+    const updated = availabilityBlocks.filter((b) => b.id !== blockId);
+    setAvailabilityBlocks(updated);
+    saveGuideBlocks(activeGuide.id, updated);
+  };
 
   // Handle Login
   const handleGuideLogin = (e: React.FormEvent) => {
@@ -306,6 +365,32 @@ export default function GuidePortalPage() {
     if (!activeGuide) return null;
     return DESTINATIONS.find((d) => d.id === activeGuide.destinationId);
   }, [activeGuide]);
+
+  // Active calendar date calculation
+  const calendarBaseYear = 2026;
+  const calendarBaseMonth = 10; // November 2026 (0-indexed: 10 is Nov)
+  const currentCalendarDate = useMemo(() => {
+    return new Date(calendarBaseYear, calendarBaseMonth + calendarMonthOffset, 1);
+  }, [calendarMonthOffset]);
+
+  const monthYearLabel = useMemo(() => {
+    return currentCalendarDate.toLocaleDateString(
+      locale === 'pt' ? 'pt-BR' : locale === 'es' ? 'es-ES' : 'en-US',
+      { month: 'long', year: 'numeric' }
+    );
+  }, [currentCalendarDate, locale]);
+
+  const daysInMonth = useMemo(() => {
+    const y = currentCalendarDate.getFullYear();
+    const m = currentCalendarDate.getMonth();
+    return new Date(y, m + 1, 0).getDate();
+  }, [currentCalendarDate]);
+
+  const firstDayOfWeek = useMemo(() => {
+    const y = currentCalendarDate.getFullYear();
+    const m = currentCalendarDate.getMonth();
+    return new Date(y, m, 1).getDay(); // 0 is Sunday
+  }, [currentCalendarDate]);
 
   // ==========================================
   // RENDER: LOGIN VIEW (Quando não autenticado)
@@ -624,7 +709,26 @@ export default function GuidePortalPage() {
                 : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
             }`}
           >
-            Visão Geral & Agenda
+            Visão Geral
+          </button>
+          <button
+            onClick={() => setActiveTab('calendar')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
+              activeTab === 'calendar'
+                ? 'bg-stone-900 text-amber-300 border border-amber-500/40 shadow-sm'
+                : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
+            }`}
+          >
+            <span>Agenda & Bloqueios</span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                availabilityBlocks.length > 0
+                  ? 'bg-amber-400 text-stone-950'
+                  : 'bg-stone-200 text-stone-700'
+              }`}
+            >
+              {availabilityBlocks.length}
+            </span>
           </button>
           <button
             onClick={() => setActiveTab('leads')}
@@ -841,8 +945,268 @@ export default function GuidePortalPage() {
         )}
 
         {/* ==================================================== */}
-        {/* TAB 2: MINHAS RESERVAS & LEADS                        */}
+        {/* TAB: AGENDA & BLOQUEIOS DE DATAS                     */}
         {/* ==================================================== */}
+        {activeTab === 'calendar' && (
+          <div className="space-y-8 animate-in fade-in">
+            {/* Header / Intro Card */}
+            <div className="bg-white rounded-3xl border border-stone-200/90 shadow-sm p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-800 mb-1">
+                  <CalendarDays className="w-4 h-4 text-amber-600" />
+                  <span>Gestão Operacional de Datas</span>
+                </div>
+                <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-stone-900">
+                  Agenda & Bloqueios de Disponibilidade
+                </h2>
+                <p className="text-xs sm:text-sm text-stone-500 mt-1 max-w-2xl">
+                  Bloqueie períodos em que você estará viajando com clientes privativos fora da plataforma, em descanso ou com compromissos pessoais. O motor de reservas do ForTurismo alertará os viajantes automaticamente.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBlockError('');
+                    setIsBlockModalOpen(true);
+                  }}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-stone-900 text-amber-300 border border-amber-500/40 hover:bg-stone-800 font-bold text-xs uppercase tracking-wider shadow-md btn-tactile cursor-pointer"
+                >
+                  <Plus className="w-4 h-4 text-amber-400" />
+                  <span>Novo Bloqueio de Data</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Visual Interactive Month Calendar */}
+            <div className="bg-white rounded-3xl border border-stone-200/90 shadow-sm p-6 sm:p-8 space-y-6">
+              {/* Month Navigation & Legend Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-100">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setCalendarMonthOffset((prev) => prev - 1)}
+                    className="p-2 rounded-xl border border-stone-200 hover:bg-stone-100 text-stone-700 cursor-pointer transition-colors"
+                    aria-label="Mês Anterior"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  <h3 className="font-editorial text-xl sm:text-2xl font-bold text-stone-900 capitalize min-w-[180px] text-center sm:text-left">
+                    {monthYearLabel}
+                  </h3>
+
+                  <button
+                    onClick={() => setCalendarMonthOffset((prev) => prev + 1)}
+                    className="p-2 rounded-xl border border-stone-200 hover:bg-stone-100 text-stone-700 cursor-pointer transition-colors"
+                    aria-label="Próximo Mês"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+
+                  {calendarMonthOffset !== 0 && (
+                    <button
+                      onClick={() => setCalendarMonthOffset(0)}
+                      className="text-[11px] font-mono text-amber-800 hover:underline px-2 py-1 rounded bg-amber-50 cursor-pointer"
+                    >
+                      Voltar ao Mês Atual
+                    </button>
+                  )}
+                </div>
+
+                {/* Calendar Legend */}
+                <div className="flex flex-wrap items-center gap-4 text-[11px] font-mono text-stone-600">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-rose-500 inline-block" /> Bloqueado
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-emerald-500 inline-block" /> Confirmada
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-amber-400 inline-block" /> Pendente
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-sm bg-[#FAF8F5] border border-stone-300 inline-block" /> Aberto
+                  </span>
+                </div>
+              </div>
+
+              {/* Calendar Grid Header */}
+              <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold uppercase tracking-wider text-stone-400 font-mono">
+                <div>Dom</div>
+                <div>Seg</div>
+                <div>Ter</div>
+                <div>Qua</div>
+                <div>Qui</div>
+                <div>Sex</div>
+                <div>Sáb</div>
+              </div>
+
+              {/* Calendar Days */}
+              <div className="grid grid-cols-7 gap-2">
+                {/* Blank spacers for first day of week */}
+                {Array.from({ length: firstDayOfWeek }).map((_, i) => (
+                  <div key={`spacer-${i}`} className="min-h-[90px] rounded-2xl bg-[#FAF8F5]/30 border border-transparent" />
+                ))}
+
+                {/* Days of current month */}
+                {Array.from({ length: daysInMonth }).map((_, i) => {
+                  const dayNum = i + 1;
+                  const y = currentCalendarDate.getFullYear();
+                  const m = String(currentCalendarDate.getMonth() + 1).padStart(2, '0');
+                  const d = String(dayNum).padStart(2, '0');
+                  const dateStr = `${y}-${m}-${d}`;
+
+                  // Check if day is blocked
+                  const block = availabilityBlocks.find(
+                    (b) => dateStr >= b.startDate && dateStr <= b.endDate
+                  );
+
+                  // Check if confirmed bookings
+                  const confirmedBookings = bookings.filter((b) => {
+                    const end = b.travelDateEnd || b.travelDateStart;
+                    return dateStr >= b.travelDateStart && dateStr <= end && b.status === 'CONFIRMED';
+                  });
+
+                  // Check if pending bookings
+                  const pendingBookings = bookings.filter((b) => {
+                    const end = b.travelDateEnd || b.travelDateStart;
+                    return dateStr >= b.travelDateStart && dateStr <= end && b.status === 'PENDING';
+                  });
+
+                  return (
+                    <div
+                      key={dateStr}
+                      onClick={() => {
+                        setBlockStartDate(dateStr);
+                        setBlockEndDate(dateStr);
+                        setIsBlockModalOpen(true);
+                      }}
+                      className={`min-h-[95px] p-2 sm:p-2.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                        block
+                          ? 'bg-rose-50/80 border-rose-300 hover:border-rose-500'
+                          : confirmedBookings.length > 0
+                          ? 'bg-emerald-50/80 border-emerald-300 hover:border-emerald-500'
+                          : pendingBookings.length > 0
+                          ? 'bg-amber-50/80 border-amber-300 hover:border-amber-500'
+                          : 'bg-[#FAF8F5]/70 border-stone-200/70 hover:bg-white hover:border-amber-400/80 hover:shadow-xs'
+                      }`}
+                      title={
+                        block
+                          ? `Bloqueio: ${block.reason}`
+                          : confirmedBookings.length > 0
+                          ? `Reserva Confirmada: ${confirmedBookings[0].customerName}`
+                          : 'Clique para bloquear esta data'
+                      }
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-xs font-bold text-stone-700">
+                          {dayNum}
+                        </span>
+                        {block && (
+                          <Lock className="w-3 h-3 text-rose-600 shrink-0" />
+                        )}
+                        {!block && confirmedBookings.length > 0 && (
+                          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                        )}
+                      </div>
+
+                      {/* Content Badges */}
+                      <div className="space-y-1 mt-1">
+                        {block && (
+                          <div className="p-1 rounded-md bg-rose-100 text-rose-900 text-[10px] font-semibold truncate leading-tight">
+                            {block.reason}
+                          </div>
+                        )}
+                        {confirmedBookings.map((cb) => (
+                          <div
+                            key={cb.id}
+                            className="p-1 rounded-md bg-emerald-100 text-emerald-900 text-[10px] font-semibold truncate leading-tight"
+                          >
+                            ✓ {cb.customerName.split(' ')[0]}
+                          </div>
+                        ))}
+                        {pendingBookings.map((pb) => (
+                          <div
+                            key={pb.id}
+                            className="p-1 rounded-md bg-amber-100 text-amber-900 text-[10px] font-semibold truncate leading-tight"
+                          >
+                            ⏳ {pb.customerName.split(' ')[0]}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* List of Active Availability Blocks */}
+            <div className="bg-white rounded-3xl border border-stone-200/90 shadow-sm p-6 sm:p-8 space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-stone-100">
+                <div>
+                  <h3 className="font-editorial text-xl font-bold text-stone-900">
+                    Bloqueios de Data Cadastrados ({availabilityBlocks.length})
+                  </h3>
+                  <p className="text-xs text-stone-500 mt-0.5">
+                    Períodos em que sua agenda permanece fechada para novas solicitações
+                  </p>
+                </div>
+              </div>
+
+              {availabilityBlocks.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {availabilityBlocks.map((block) => {
+                    const s = new Date(block.startDate);
+                    const e = new Date(block.endDate);
+                    const diffDays = Math.max(
+                      1,
+                      Math.round((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)) + 1
+                    );
+
+                    return (
+                      <div
+                        key={block.id}
+                        className="p-4 rounded-2xl bg-[#FAF8F5] border border-stone-200/80 hover:border-amber-400 transition-all flex items-start justify-between gap-4"
+                      >
+                        <div className="space-y-1.5 flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-100 text-rose-800">
+                              {diffDays} {diffDays === 1 ? 'dia' : 'dias'}
+                            </span>
+                            <span className="font-mono text-xs font-bold text-stone-800">
+                              {block.startDate} → {block.endDate}
+                            </span>
+                          </div>
+                          <h4 className="font-editorial text-sm font-bold text-stone-900 truncate">
+                            {block.reason}
+                          </h4>
+                          <span className="text-[11px] text-stone-400 font-mono block">
+                            Cadastrado em {new Date(block.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveBlock(block.id)}
+                          className="p-2 rounded-xl text-stone-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-all cursor-pointer"
+                          title="Remover Bloqueio"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-10 bg-[#FAF8F5] rounded-2xl border border-stone-200/60 text-xs text-stone-500">
+                  <CalendarDays className="w-8 h-8 mx-auto text-stone-400 mb-2" />
+                  <span>Você não possui nenhum período bloqueado. Sua agenda está 100% aberta para reservas.</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         {activeTab === 'leads' && (
           <div className="bg-white rounded-3xl border border-stone-200/90 shadow-sm p-6 sm:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-stone-100">
@@ -1351,6 +1715,116 @@ export default function GuidePortalPage() {
                   </button>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+        {/* --- MODAL: NOVO BLOQUEIO DE DATA --- */}
+        {isBlockModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-xs">
+            <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 border border-stone-200 shadow-2xl animate-in fade-in zoom-in-95">
+              <div className="flex items-center justify-between pb-3 border-b border-stone-100">
+                <div className="flex items-center gap-2">
+                  <Lock className="w-5 h-5 text-amber-600" />
+                  <h3 className="font-editorial text-xl font-bold text-stone-900">
+                    Bloquear Período no Calendário
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setIsBlockModalOpen(false)}
+                  className="p-1 rounded-lg text-stone-400 hover:text-stone-600 cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleAddBlock} className="space-y-4 text-xs font-sans">
+                <p className="text-stone-600">
+                  Defina as datas em que você não poderá receber novos viajantes da ForTurismo:
+                </p>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold uppercase tracking-wider text-stone-700 mb-1">
+                      Data Inicial: *
+                    </label>
+                    <input
+                      required
+                      type="date"
+                      value={blockStartDate}
+                      onChange={(e) => setBlockStartDate(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-[#FAF8F5] focus:bg-white focus:outline-hidden font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold uppercase tracking-wider text-stone-700 mb-1">
+                      Data Final:
+                    </label>
+                    <input
+                      type="date"
+                      value={blockEndDate}
+                      placeholder={blockStartDate}
+                      onChange={(e) => setBlockEndDate(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-[#FAF8F5] focus:bg-white focus:outline-hidden font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold uppercase tracking-wider text-stone-700 mb-1">
+                    Motivo do Bloqueio:
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: Tour Privativo VIP, Férias em Família..."
+                    value={blockReason}
+                    onChange={(e) => setBlockReason(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-[#FAF8F5] focus:bg-white focus:outline-hidden"
+                  />
+
+                  {/* Quick Preset Chips */}
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {[
+                      'Tour Privativo VIP',
+                      'Férias / Descanso',
+                      'Manutenção de Transporte',
+                      'Compromisso Pessoal',
+                      'Atendimento a Delegação',
+                    ].map((preset) => (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => setBlockReason(preset)}
+                        className="px-2 py-1 rounded-lg text-[10px] bg-stone-100 hover:bg-amber-100 hover:text-amber-900 border border-stone-200 text-stone-700 font-medium transition-colors cursor-pointer"
+                      >
+                        + {preset}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {blockError && (
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
+                    {blockError}
+                  </div>
+                )}
+
+                <div className="pt-2 flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsBlockModalOpen(false)}
+                    className="px-4 py-2.5 rounded-xl border border-stone-200 text-stone-600 text-xs font-semibold hover:bg-stone-50 cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 rounded-xl bg-stone-900 text-amber-300 border border-amber-500/40 hover:bg-stone-800 font-bold text-xs uppercase tracking-wider shadow-md btn-tactile cursor-pointer"
+                  >
+                    Salvar Bloqueio de Agenda
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

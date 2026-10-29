@@ -11,6 +11,7 @@ import {
   buildWhatsAppUrl,
 } from '@/lib/whatsapp';
 import SuccessModal from './SuccessModal';
+import { checkRangeOverlap } from '@/lib/availability';
 import {
   Calendar,
   Users,
@@ -84,6 +85,9 @@ export default function BookingForm() {
   // Filter available guides and tours based on destination
   const availableGuides = GUIDES.filter((g) => g.destinationId === destinationId);
   const availableTours = TOURS.filter((t) => t.destinationId === destinationId);
+
+  // Check if selected guide has any blocked date range overlapping with chosen dates
+  const selectedGuideBlocked = checkRangeOverlap(guideId, travelDateStart, travelDateEnd);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -272,6 +276,24 @@ export default function BookingForm() {
               </div>
             </div>
           </div>
+
+          {/* Guide Availability Warning if blocked */}
+          {selectedGuideBlocked && (
+            <div className="p-4 rounded-2xl bg-amber-50/90 border border-amber-300 text-xs text-amber-950 flex items-start gap-3 shadow-sm animate-in fade-in">
+              <span className="text-xl shrink-0">⚠️</span>
+              <div className="space-y-1">
+                <p className="font-bold text-amber-900">
+                  Nota de Disponibilidade do Guia Credenciado
+                </p>
+                <p className="text-amber-800 leading-relaxed font-sans">
+                  O guia selecionado indicou indisponibilidade parcial/total para o período de{' '}
+                  <strong className="font-mono">{selectedGuideBlocked.startDate}</strong> a{' '}
+                  <strong className="font-mono">{selectedGuideBlocked.endDate}</strong> ({selectedGuideBlocked.reason}).
+                  Você pode submeter sua solicitação normalmente — nosso Concierge verificará horários flexíveis ou apresentará guias parceiros credenciados equivalentes.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Traveler Contact Info */}
